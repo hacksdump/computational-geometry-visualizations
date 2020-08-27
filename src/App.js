@@ -1,22 +1,26 @@
 import React, {useState} from 'react';
-import './App.scss';
+import styles from './App.module.scss';
 import Canvas from "./component/Canvas";
+import NumberInput from "./component/NumberInput";
 
-const NumberInput = (props) => {
-    return <input type='number' min={0} max={props.max} onChange={props.onChange} value={props.numberOfPoints}/>
-}
+const MIN = 0
+const MAX = 25
 
 function App() {
-    const [numberOfPoints, setNumberOfPoints] = useState(0);
+    const [numberOfPoints, setNumberOfPoints] = useState(MIN);
     const handleNumericInputChange = (event) => {
         const points = event.target.value;
-        setNumberOfPoints(points);
+        if (points >= MIN && points <= MAX) {
+            setNumberOfPoints(points);
+        }
     }
 
     return (
-        <div className="App">
+        <div className={styles.App}>
             <Canvas numberOfPoints={numberOfPoints}/>
-            <NumberInput max={10} onChange={handleNumericInputChange} numberOfPoints={numberOfPoints}/>
+            <div className={styles.controls}>
+                <NumberInput max={MAX} onChange={handleNumericInputChange} numberOfPoints={numberOfPoints}/>
+            </div>
         </div>
     );
 }

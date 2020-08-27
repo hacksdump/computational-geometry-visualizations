@@ -48,7 +48,6 @@ const Canvas = props => {
         const context = canvas.getContext('2d')
         context.fillStyle = BLACK;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height)
-        drawLines()
     }, [])
 
     const clearCanvas = () => {
@@ -62,10 +61,10 @@ const Canvas = props => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d')
         context.strokeStyle = WHITE;
-        context.lineWidth = 2;
+        context.lineWidth = 1;
         context.lineCap = 'round';
         context.beginPath();
-        if (props.numberOfPoints) {
+        if (props.numberOfPoints > 0) {
             const firstPoint = randomPoints[0];
             context.moveTo(firstPoint.x, firstPoint.y);
             for (let i = 1; i < props.numberOfPoints; i++) {
@@ -83,7 +82,7 @@ const Canvas = props => {
         context.fillStyle = BLACK;
         context.lineWidth = 2;
         context.lineCap = 'round';
-        if (props.numberOfPoints) {
+        if (props.numberOfPoints > 0) {
             for (let i = 0; i < props.numberOfPoints; i++) {
                 context.beginPath();
                 const pointToDraw = randomPoints[i];
