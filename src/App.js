@@ -1,26 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import './App.scss';
+import Canvas from "./component/Canvas";
+
+const NumberInput = (props) => {
+    return <input type='number' min={0} max={props.max} onChange={props.onChange} value={props.numberOfPoints}/>
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [numberOfPoints, setNumberOfPoints] = useState(0);
+    const handleNumericInputChange = (event) => {
+        const points = event.target.value;
+        setNumberOfPoints(points);
+    }
+
+    return (
+        <div className="App">
+            <Canvas numberOfPoints={numberOfPoints}/>
+            <NumberInput max={10} onChange={handleNumericInputChange} numberOfPoints={numberOfPoints}/>
+        </div>
+    );
 }
 
 export default App;
