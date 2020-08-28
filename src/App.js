@@ -21,7 +21,7 @@ const options = [
 
 function App() {
     const [numberOfPoints, setNumberOfPoints] = useState(MIN);
-    const [mode, setMode] = useState('')
+    const [mode, setMode] = useState(MODE__POLYGONAL_CHAIN)
     const handleNumericInputChange = (event) => {
         const points = event.target.value;
         if (points >= MIN && points <= MAX) {
