@@ -4,6 +4,8 @@ import {Point, sortPointsSimplePolygon} from "../../geometry";
 
 const BLACK = '#000';
 const WHITE = '#FFF';
+const OFF_WHITE = '#F5F2E0'
+const LIGHT_CORAL = 'lightcoral'
 
 const Index = props => {
     const canvasRef = useRef(null);
@@ -60,13 +62,20 @@ const Index = props => {
         context.lineCap = 'round';
         if (points.length > 0) {
             const firstPoint = points[0];
+            context.beginPath();
             context.moveTo(firstPoint.x, firstPoint.y);
-            for (let i = 0; i < points.length - 1; i++) {
-                drawLine(points[i], points[i + 1])
+            for (let i = 1; i < points.length; i++) {
+                const targetPoint = points[i]
+                context.lineTo(targetPoint.x, targetPoint.y)
             }
-        }
-        if (closed) {
-            drawLine(points[0], points[points.length - 1])
+            if (closed) {
+                context.closePath();
+            }
+            context.stroke();
+            if (closed) {
+                context.fillStyle = OFF_WHITE;
+                context.fill();
+            }
         }
     }
 
@@ -83,6 +92,7 @@ const Index = props => {
                 const pointToDraw = points[i];
                 context.arc(pointToDraw.x, pointToDraw.y, 5, 0, 2 * Math.PI);
                 context.stroke();
+                context.fillStyle = LIGHT_CORAL
                 context.fill();
             }
         }
