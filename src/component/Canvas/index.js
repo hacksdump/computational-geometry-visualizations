@@ -1,22 +1,21 @@
 import React, {useEffect, useRef} from 'react';
-import {MODE__SIMPLE_POLYGON} from "../mode";
-import {generateRandomPoints, getAngle, getCentroid} from "../geometry";
+import {MODE__SIMPLE_POLYGON} from "../../mode";
+import {Point, sortPointsSimplePolygon} from "../../geometry";
 
 const BLACK = '#000';
 const WHITE = '#FFF';
 
-const Canvas = props => {
+const Index = props => {
     const canvasRef = useRef(null);
-    let randomPoints = [];
 
-    const setRandomPoints = () => {
-        if (randomPoints.length === 0) {
-            const canvas = canvasRef.current;
-            const context = canvas.getContext('2d')
-            const canvasWidth = context.canvas.width
-            const canvasHeight = context.canvas.height
-            randomPoints = generateRandomPoints(canvasWidth, canvasHeight, props.numberOfPoints)
-        }
+    const getScaledPoints = () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d')
+        const canvasWidth = context.canvas.width
+        const canvasHeight = context.canvas.height
+        return props.points.map(point =>
+            new Point(point.x * canvasWidth, point.y * canvasHeight)
+        )
     }
 
     useEffect(() => {
@@ -27,9 +26,7 @@ const Canvas = props => {
         // ...then set the internal size to match
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
-        const context = canvas.getContext('2d')
-        context.fillStyle = BLACK;
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height)
+        clearCanvas();
     }, [])
 
     const clearCanvas = () => {
@@ -55,32 +52,35 @@ const Canvas = props => {
     }
 
 
-    const drawLines = () => {
+    const drawPolygon = (points, closed = true) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d')
         context.strokeStyle = WHITE;
         context.lineWidth = 1;
         context.lineCap = 'round';
-        if (randomPoints.length > 0) {
-            const firstPoint = randomPoints[0];
+        if (points.length > 0) {
+            const firstPoint = points[0];
             context.moveTo(firstPoint.x, firstPoint.y);
-            for (let i = 0; i < props.numberOfPoints - 1; i++) {
-                drawLine(randomPoints[i], randomPoints[i+1])
+            for (let i = 0; i < points.length - 1; i++) {
+                drawLine(points[i], points[i + 1])
             }
+        }
+        if (closed) {
+            drawLine(points[0], points[points.length - 1])
         }
     }
 
-    const drawPoints = () => {
+    const drawPoints = (points) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d')
         context.strokeStyle = WHITE;
         context.fillStyle = BLACK;
         context.lineWidth = 2;
         context.lineCap = 'round';
-        if (randomPoints.length > 0) {
-            for (let i = 0; i < props.numberOfPoints; i++) {
+        if (points.length > 0) {
+            for (let i = 0; i < points.length; i++) {
                 context.beginPath();
-                const pointToDraw = randomPoints[i];
+                const pointToDraw = points[i];
                 context.arc(pointToDraw.x, pointToDraw.y, 5, 0, 2 * Math.PI);
                 context.stroke();
                 context.fill();
@@ -88,30 +88,21 @@ const Canvas = props => {
         }
     }
 
-    const sortPointsSimplePolygon = () => {
-        const centroid = getCentroid(randomPoints);
-        const pointsWithAngles = randomPoints.map(point => {
-            return {point: point, angle: getAngle(point, centroid)}
-        });
-        pointsWithAngles.sort(
-            (pointWithAngle1, pointWithAngle2) =>
-                (pointWithAngle1.angle - pointWithAngle2.angle));
-        randomPoints = pointsWithAngles.map(pointWithAngle => pointWithAngle.point)
+    if (canvasRef && canvasRef.current) {
+        clearCanvas();
+        if (props.points && props.points.length > 0) {
+            let points = getScaledPoints()
+            let closed = false;
+            if (props.mode === MODE__SIMPLE_POLYGON) {
+                points = sortPointsSimplePolygon(points);
+                closed = true
+            }
+            drawPolygon(points, closed);
+            drawPoints(points);
+        }
     }
 
-    if (canvasRef && canvasRef.current) {
-        setRandomPoints()
-        if (props.mode === MODE__SIMPLE_POLYGON) {
-            sortPointsSimplePolygon()
-        }
-        clearCanvas();
-        drawLines();
-        if (props.mode === MODE__SIMPLE_POLYGON) {
-            drawLine(randomPoints[0], randomPoints[randomPoints.length - 1]);
-        }
-        drawPoints();
-    }
     return <canvas ref={canvasRef}/>
 }
 
-export default Canvas;
+export default Index;

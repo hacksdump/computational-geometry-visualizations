@@ -4,6 +4,7 @@ import Canvas from "./component/Canvas";
 import NumberInput from "./component/NumberInput";
 import {MODE__POLYGONAL_CHAIN, MODE__SIMPLE_POLYGON} from "./mode";
 import SelectInput from "./component/SelectInput";
+import {generateRandomPoints} from "./geometry";
 
 const MIN = 0
 const MAX = 25
@@ -20,12 +21,12 @@ const options = [
 ]
 
 function App() {
-    const [numberOfPoints, setNumberOfPoints] = useState(MIN);
+    const [points, setPoints] = useState([]);
     const [mode, setMode] = useState(MODE__POLYGONAL_CHAIN)
     const handleNumericInputChange = (event) => {
-        const points = event.target.value;
-        if (points >= MIN && points <= MAX) {
-            setNumberOfPoints(points);
+        const numberOfPoints = event.target.value;
+        if (numberOfPoints >= MIN && numberOfPoints <= MAX) {
+            setPoints(generateRandomPoints(1, 1, numberOfPoints))
         }
     }
 
@@ -36,10 +37,10 @@ function App() {
 
     return (
         <div className={styles.App}>
-            <Canvas mode={mode} numberOfPoints={numberOfPoints}/>
+            <Canvas mode={mode} points={points}/>
             <div className={styles.controls}>
                 <SelectInput options={options} onChange={handleSelection}/>
-                <NumberInput max={MAX} onChange={handleNumericInputChange} numberOfPoints={numberOfPoints}/>
+                <NumberInput max={MAX} onChange={handleNumericInputChange} numberOfPoints={points.length}/>
             </div>
         </div>
     );

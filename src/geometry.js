@@ -55,3 +55,14 @@ export const generateRandomPoints = (limX, limY, count) => {
     }
     return randomPoints;
 }
+
+export const sortPointsSimplePolygon = (points) => {
+    const centroid = getCentroid(points);
+    const pointsWithAngles = points.map(point => {
+        return {point: point, angle: getAngle(point, centroid)}
+    });
+    pointsWithAngles.sort(
+        (pointWithAngle1, pointWithAngle2) =>
+            (pointWithAngle1.angle - pointWithAngle2.angle));
+    return pointsWithAngles.map(pointWithAngle => pointWithAngle.point)
+}
