@@ -36,6 +36,7 @@ export const getCentroid = (points) => {
 
 export const generateRandomPoints = (limX, limY, count) => {
     const diagonal = distance(new Point(limX, limY));
+    const minMutualLengthAllowed = diagonal / 16;
     const minLineLengthAllowed = diagonal / 4;
     const maxLineLengthAllowed = diagonal / 2;
     const randomPoints = []
@@ -46,8 +47,15 @@ export const generateRandomPoints = (limX, limY, count) => {
             if (i === 0) {
                 break;
             }
+            let distanceFromAllPastPointsMoreThanThreshold = true;
+            for (let j = 0; j < randomPoints.length; j++) {
+                if (distance(randomPoint, randomPoints[j]) < minMutualLengthAllowed) {
+                    distanceFromAllPastPointsMoreThanThreshold = false;
+                    break;
+                }
+            }
             const distanceFromPoint = distance(randomPoint, randomPoints[i - 1])
-            if (distanceFromPoint < maxLineLengthAllowed && distanceFromPoint > minLineLengthAllowed) {
+            if (distanceFromPoint < maxLineLengthAllowed && distanceFromPoint > minLineLengthAllowed && distanceFromAllPastPointsMoreThanThreshold) {
                 break;
             }
         }
