@@ -5,6 +5,7 @@ import NumberInput from "./component/NumberInput";
 import {MODE__POLYGONAL_CHAIN, MODE__SIMPLE_POLYGON} from "./mode";
 import SelectInput from "./component/SelectInput";
 import {generateRandomPoints} from "./geometry";
+import Button from "./component/Button";
 
 const MIN = 0
 const MAX = 25
@@ -35,10 +36,19 @@ function App() {
         setMode(selectedMode)
     }
 
+    const randomizePoints = () => {
+        setPoints(generateRandomPoints(1, 1,
+            points.length > 0 ?
+            points.length :
+            Math.floor(3 + Math.random() * (MAX - 3))
+        ))
+    }
+
     return (
         <div className={styles.App}>
             <Canvas mode={mode} points={points}/>
             <div className={styles.controls}>
+                <Button onClick={randomizePoints} display='Randomize'/>
                 <SelectInput options={options} onChange={handleSelection}/>
                 <NumberInput max={MAX} onChange={handleNumericInputChange} numberOfPoints={points.length}/>
             </div>
